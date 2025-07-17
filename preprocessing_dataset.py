@@ -22,14 +22,11 @@ def clean_and_prepare_text_for_doccano_final_v2(input_filepath, output_filepath)
             # 2단계: 한 줄에 숫자 하나만 있는 라인 삭제
             if line.strip().isdigit() and len(line.strip()) == 1:
                 continue # 해당 줄은 건너뛰고 다음 줄로 넘어갑니다.
-            
+
             # 모든 줄의 양쪽 공백 제거 후 임시 리스트에 추가 (원래 줄바꿈도 제거)
             temp_content.append(line.strip())
-        
+
         # 임시 리스트의 줄들을 하나의 문자열로 결합 (각 줄 사이에 공백 1개로 연결)
-        # 이렇게 하면 모든 원본 줄바꿈이 사라진 상태에서 '질의' 시작점을 찾기 쉬워집니다.
-        # 주의: 이로 인해 원본 문장 내의 줄바꿈(예: 시 구절)도 사라질 수 있습니다.
-        # 그러나 현재 목표는 Q&A 쌍을 문서로 분리하는 것이므로, 괜찮습니다.
         cleaned_raw_text = ' '.join(temp_content).strip()
 
         # 3단계: '질의 N.' 앞에 빈 줄 추가
@@ -46,6 +43,12 @@ def clean_and_prepare_text_for_doccano_final_v2(input_filepath, output_filepath)
 
         # 패턴: '질의' 다음에 공백(0개 이상), 숫자(1개 이상), 점(선택적)
         final_content = re.sub(r'질의\s*\d+\.?', replace_query_marker, cleaned_raw_text)
+
+        final_content = re.sub(r'(회신\s*\d\.?)', r'\n\1', final_content)
+        
+        final_content = re.sub(r'▣.*', '', final_content)  # '▣'로 시작하는 줄 제거
+        
+        final_content = re.sub(r'\s\d{2,3}\s', '', final_content)  # 숫자(2-3자리) 제거
 
         # 최종적으로 문자열의 시작과 끝에 불필요한 공백/개행을 제거
         final_content = final_content.strip()
