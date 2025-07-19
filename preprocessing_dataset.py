@@ -44,7 +44,7 @@ def clean_and_prepare_text_for_doccano_final_v2(input_filepath, output_filepath)
         # 패턴: '질의' 다음에 공백(0개 이상), 숫자(1개 이상), 점(선택적)
         final_content = re.sub(r'질의\s*\d+\.?', replace_query_marker, cleaned_raw_text)
 
-        final_content = re.sub(r'(회신\s*\d\.?)', r'\n\1', final_content)
+        # final_content = re.sub(r'(회신\s*\d\.?)', r'\n\1', final_content)
         
         final_content = re.sub(r'▣.*', '', final_content)  # '▣'로 시작하는 줄 제거
         
